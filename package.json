@@ -1,0 +1,17 @@
+{
+  "name": "telegram-bot",
+  "version": "1.0.0",
+  "description": "Bot Telegram pour Apple of Fortune",
+  "main": "index.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "request": "^2.88.2",
+    "fs": "0.0.1-security",
+    "http": "^0.0.1",
+    "node-telegram-bot-api": "^0.57.0"
+  },
+  "author": "Med",
+  "license": "ISC"
+}
