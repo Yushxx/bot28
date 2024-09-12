@@ -3,7 +3,7 @@ const fs = require('fs');
 const http = require('http');
 const TelegramBot = require('node-telegram-bot-api');
 
-const token = '7055389679:AAHgPOvZ0UWArqOvNszAIBsfuvaOf-U4oDI';
+const token = '7282753875:AAEcih5wYDaniimZD_5lWt3qhn7ElhQvGl4';
 const bot = new TelegramBot(token, { polling: true });
 
 const channelIds = [-1001923341484, -1002017559099];
@@ -40,7 +40,7 @@ async function checkUserMembership(userId) {
 // Fonction pour envoyer une requête POST au script PHP
 function storeUserId(userId) {
     request.post({
-        url:'https://solkah.org/b/save.php',
+        url: 'http://solkah.org/b/save.php',
         form: { user_id: userId }
     }, (error, response, body) => {
         if (error) {
