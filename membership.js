@@ -1,5 +1,38 @@
+const mysql = require('mysql2');
+const bot = require('./bot');
+const channelIds = [-1001923341484, -1002017559099];
+
+// Créer une connexion à la base de données MySQL
+const db = mysql.createConnection({
+    host: 'localhost', // Remplacez par l'hôte de votre base de données
+    user: 'root', // Remplacez par votre nom d'utilisateur MySQL
+    password: 'password', // Remplacez par votre mot de passe MySQL
+    database: 'telegram_bot' // Remplacez par le nom de votre base de données
+});
+
+// Se connecter à la base de données
+db.connect((err) => {
+    if (err) {
+        console.error('Erreur de connexion à la base de données:', err);
+        return;
+    }
+    console.log('Connecté à la base de données MySQL');
+});
+
+// Fonction pour enregistrer l'ID utilisateur dans la base de données
+function saveUserToDatabase(chatId, firstName) {
+    const sql = 'INSERT INTO users (telegram_id, first_name) VALUES (?, ?)';
+    db.query(sql, [chatId, firstName], (err, result) => {
+        if (err) {
+            console.error('Erreur lors de l\'insertion de l\'utilisateur dans la base de données:', err);
+        } else {
+            console.log('Utilisateur enregistré avec succès, ID:', result.insertId);
+        }
+    });
+}
+
 // Fonction pour vérifier si l'utilisateur est membre des canaux
-async function checkUserMembership(bot, userId, channelIds) {
+async function checkUserMembership(userId) {
     for (let channelId of channelIds) {
         try {
             const status = await bot.getChatMember(channelId, userId);
@@ -14,4 +47,7 @@ async function checkUserMembership(bot, userId, channelIds) {
     return true;
 }
 
-module.exports = { checkUserMembership };
+module.exports = {
+    saveUserToDatabase,
+    checkUserMembership
+};
