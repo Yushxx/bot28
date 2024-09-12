@@ -4,7 +4,7 @@
   "description": "Bot Telegram pour Apple of Fortune",
   "main": "index.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "request": "^2.88.2",
