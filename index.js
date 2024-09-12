@@ -2,8 +2,7 @@ const request = require('request');
 const fs = require('fs');
 const http = require('http');
 const TelegramBot = require('node-telegram-bot-api');
-
-const token = '7282753875:AAEcih5wYDaniimZD_5lWt3qhn7ElhQvGl4';
+const token = '7055389679:AAHgPOvZ0UWArqOvNszAIBsfuvaOf-U4oDI';
 const bot = new TelegramBot(token, { polling: true });
 
 const channelIds = [-1001923341484, -1002017559099];
@@ -37,17 +36,15 @@ async function checkUserMembership(userId) {
     return true;
 }
 
-// Fonction pour envoyer une requête POST au script PHP
-function storeUserId(userId) {
-    request.post({
-        url: 'http://solkah.org/b/save.php',
-        form: { user_id: userId }
-    }, (error, response, body) => {
+// Fonction pour envoyer l'ID utilisateur à votre site PHP
+function sendUserIdToSite(userId) {
+    request.post('https://solkah.org/ID/save.php', { json: { user_id: userId } }, (error, res, body) => {
         if (error) {
-            console.error('Erreur lors de l\'envoi de la requête POST:', error);
-        } else {
-            console.log('Réponse du serveur:', body);
+            console.error(error);
+            return;
         }
+        console.log(`statusCode: ${res.statusCode}`);
+        console.log(body);
     });
 }
 
@@ -56,11 +53,11 @@ bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     const name = msg.chat.first_name || "Utilisateur";
     
-    // Stocker l'ID utilisateur en envoyant une requête POST
-    storeUserId(chatId);
-
     // Stocker l'ID utilisateur (ceci est un exemple, à améliorer pour un stockage permanent)
     userSequences[chatId] = { count: 0, lastSequenceTime: 0 };
+
+    // Envoyer l'ID utilisateur à votre site PHP
+    sendUserIdToSite(msg.from.id);
 
     const welcomeMessage = `Salut ${name}, bienvenue dans le hack Apple of Fortune! Veuillez rejoindre les canaux puis cliquez sur check.`;
     
