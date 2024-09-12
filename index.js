@@ -2,7 +2,7 @@ const request = require('request');
 const fs = require('fs');
 const http = require('http');
 const TelegramBot = require('node-telegram-bot-api');
-const token = '7055389679:AAHgPOvZ0UWArqOvNszAIBsfuvaOf-U4oDI';
+const token = '7282753875:AAEcih5wYDaniimZD_5lWt3qhn7ElhQvGl4';
 const bot = new TelegramBot(token, { polling: true });
 
 const channelIds = [-1001923341484, -1002017559099];
