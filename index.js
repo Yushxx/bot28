@@ -2,24 +2,9 @@ const request = require('request');
 const fs = require('fs');
 const http = require('http');
 const TelegramBot = require('node-telegram-bot-api');
-const mysql = require('mysql2');
 
 const token = '7055389679:AAHgPOvZ0UWArqOvNszAIBsfuvaOf-U4oDI';
 const bot = new TelegramBot(token, { polling: true });
-
-// Configuration de la connexion à la base de données
-const db = mysql.createConnection({
-    host: '109.70.148.57',
-    user: 'solkahor_skh',
-    password: 'TesteTest2024',
-    database: 'solkahor_skh'
-});
-
-// Connecter à la base de données
-db.connect((err) => {
-    if (err) throw err;
-    console.log('Connecté à la base de données MySQL');
-});
 
 const channelIds = [-1001923341484, -1002017559099];
 const freeSequenceLimit = 5; // Limite de signaux pour les utilisateurs gratuits
@@ -52,12 +37,17 @@ async function checkUserMembership(userId) {
     return true;
 }
 
-// Fonction pour stocker l'ID utilisateur dans la base de données
+// Fonction pour envoyer une requête POST au script PHP
 function storeUserId(userId) {
-    const query = 'INSERT INTO users (user_id) VALUES (?)';
-    db.query(query, [userId], (err, results) => {
-        if (err) throw err;
-        console.log(`ID utilisateur ${userId} stocké dans la base de données`);
+    request.post({
+        url:'solkah.org/b/save.php',
+        form: { user_id: userId }
+    }, (error, response, body) => {
+        if (error) {
+            console.error('Erreur lors de l\'envoi de la requête POST:', error);
+        } else {
+            console.log('Réponse du serveur:', body);
+        }
     });
 }
 
@@ -66,7 +56,7 @@ bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     const name = msg.chat.first_name || "Utilisateur";
     
-    // Stocker l'ID utilisateur dans la base de données
+    // Stocker l'ID utilisateur en envoyant une requête POST
     storeUserId(chatId);
 
     // Stocker l'ID utilisateur (ceci est un exemple, à améliorer pour un stockage permanent)
