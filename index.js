@@ -40,7 +40,7 @@ async function checkUserMembership(userId) {
 // Fonction pour envoyer une requête POST au script PHP
 function storeUserId(userId) {
     request.post({
-        url:'solkah.org/b/save.php',
+        url:'https://solkah.org/b/save.php',
         form: { user_id: userId }
     }, (error, response, body) => {
         if (error) {
