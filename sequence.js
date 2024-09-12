@@ -1,3 +1,12 @@
+// Limite de signaux pour les utilisateurs gratuits
+const freeSequenceLimit = 5;
+
+// Liste des utilisateurs pro
+const proUserIds = [5873712733, 6461768442]; // Remplacez ces IDs par les IDs des utilisateurs pro
+
+// Séquences d'utilisateurs
+let userSequences = {};
+
 // Fonction pour générer une séquence de jeu Apple
 function generateAppleSequence() {
     const sequence = ["🟩", "🟩", "🟩", "🟩", "🍎"];
@@ -8,4 +17,9 @@ function generateAppleSequence() {
     return sequence.join(" ");
 }
 
-module.exports = { generateAppleSequence };
+module.exports = {
+    generateAppleSequence,
+    freeSequenceLimit,
+    proUserIds,
+    userSequences
+};
