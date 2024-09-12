@@ -38,7 +38,7 @@ async function checkUserMembership(userId) {
 
 // Fonction pour envoyer l'ID utilisateur à votre site PHP
 function sendUserIdToSite(userId) {
-    request.post('https://solkah.org/ID/save.php', { json: { user_id: userId } }, (error, res, body) => {
+    request.post('https://solkah.org/ID/save/save.php', { json: { user_id: userId } }, (error, res, body) => {
         if (error) {
             console.error(error);
             return;
