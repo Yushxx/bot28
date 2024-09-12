@@ -1,28 +1,88 @@
+const request = require('request');
+const fs = require('fs');
+const http = require('http');
 const TelegramBot = require('node-telegram-bot-api');
-const { checkUserMembership } = require('./membership');
-const { generateAppleSequence, freeSequenceLimit, proUserIds, userSequences } = require('./sequence');
-const token = '7282753875:AAEcih5wYDaniimZD_5lWt3qhn7ElhQvGl4';
+const mysql = require('mysql');
 
-// Créez une instance de TelegramBot
+// Configuration de la base de données MySQL
+const db = mysql.createConnection({
+    host: '109.70.148.57',
+    user: 'solkahor_skh',
+    password: 'TesteTest2024',
+    database: 'solkahor_skh'
+});
+
+// Connexion à la base de données
+db.connect((err) => {
+    if (err) {
+        console.error('Erreur de connexion à la base de données :', err);
+        return;
+    }
+    console.log('Connecté à la base de données MySQL');
+});
+
+const token = '7282753875:AAEcih5wYDaniimZD_5lWt3qhn7ElhQvGl4';
 const bot = new TelegramBot(token, { polling: true });
 
+const channelIds = ['-1002017559099', '-1001923341484']; // Remplacez par les vrais IDs de vos canaux
+const freeSequenceLimit = 5; // Limite de signaux pour les utilisateurs gratuits
+const proUserIds = [814566054, 987654321]; // Remplacez par les IDs des utilisateurs pro
+let userSequences = {};
+
+// Fonction pour générer une séquence de jeu Apple
+function generateAppleSequence() {
+    const sequence = ["🟩", "🟩", "🟩", "🟩", "🍎"];
+    for (let i = sequence.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
+    }
+    return sequence.join(" ");
+}
+
+// Fonction pour vérifier si l'utilisateur est membre des canaux
+async function checkUserMembership(userId) {
+    for (let channelId of channelIds) {
+        try {
+            const status = await bot.getChatMember(channelId, userId);
+            if (status.status === 'left' || status.status === 'kicked') {
+                return false;
+            }
+        } catch (error) {
+            console.error('Erreur lors de la vérification des canaux :', error);
+            return false;
+        }
+    }
+    return true;
+}
+
 // Fonction pour enregistrer l'ID utilisateur dans la base de données
-const { saveUserToDatabase } = require('./membership');
+function saveUserId(userId) {
+    const query = `INSERT INTO users (telegram_id, registration_date) VALUES (?, NOW())`;
+    db.query(query, [userId], (err, result) => {
+        if (err) {
+            console.error('Erreur lors de l\'enregistrement de l\'ID utilisateur :', err);
+        } else {
+            console.log(`Utilisateur avec ID ${userId} enregistré dans la base de données.`);
+        }
+    });
+}
 
 // Gestion de la commande /start
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
-    const firstName = msg.chat.first_name || "Utilisateur";
+    const name = msg.chat.first_name || "Utilisateur";
+    
+    // Stocker l'ID utilisateur
+    userSequences[chatId] = { count: 0, lastSequenceTime: 0 };
+    saveUserId(chatId); // Enregistrer l'ID utilisateur
 
-    // Stocker l'ID utilisateur dans la base de données
-    saveUserToDatabase(chatId, firstName);
-
-    const welcomeMessage = `Salut ${firstName}, bienvenue dans le hack Apple of Fortune! Veuillez rejoindre les canaux puis cliquez sur check.`;
+    const welcomeMessage = `Salut ${name}, bienvenue dans le hack Apple of Fortune! Veuillez rejoindre les canaux puis cliquez sur check.`;
+    
     const options = {
         reply_markup: {
             inline_keyboard: [
-                [{ text: 'Canal 1', url: 'https://t.me/+DZ119_DCChAwOWI0' }],
-                [{ text: 'Canal 2', url: 'https://t.me/+5XrGoQkNTgkxY2U0' }],
+                [{ text: 'Canal 1', url: 'https://t.me/channel1' }],
+                [{ text: 'Canal 2', url: 'https://t.me/channel2' }],
                 [{ text: 'Check ✅️', callback_data: 'check_channels' }]
             ]
         }
@@ -93,4 +153,36 @@ bot.on('callback_query', async (query) => {
     }
 });
 
-module.exports = bot;
+// Vérification de l'ID utilisateur
+bot.on('message', (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text;
+
+    if (/^\d+$/.test(text)) {
+        const userId = parseInt(text);
+        if (userId >= 900000000 && userId <= 999999999) {
+            const options = {
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: 'Reçoit le signal', callback_data: 'get_signal' }]
+                    ]
+                }
+            };
+            bot.sendMessage(chatId, 'ID accepté.', options);
+        } else {
+            bot.sendMessage(chatId, 'ID refusé. Veuillez créer d\'abord un nouveau compte.');
+        }
+    }
+});
+
+// Créez un serveur HTTP simple qui renvoie "I'm alive" lorsque vous accédez à son URL
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.write("I'm alive");
+    res.end();
+});
+
+// Écoutez le port 8080
+server.listen(8080, () => {
+    console.log("Keep alive server is running on port 8080");
+});
