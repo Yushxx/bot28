@@ -2,9 +2,12 @@ const request = require('request');
 const fs = require('fs');
 const http = require('http');
 const TelegramBot = require('node-telegram-bot-api');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
-// Configuration de la base de données MySQL
+const token = '7055389679:AAHgPOvZ0UWArqOvNszAIBsfuvaOf-U4oDI';
+const bot = new TelegramBot(token, { polling: true });
+
+// Configuration de la connexion à la base de données
 const db = mysql.createConnection({
     host: '109.70.148.57',
     user: 'solkahor_skh',
@@ -12,21 +15,15 @@ const db = mysql.createConnection({
     database: 'solkahor_skh'
 });
 
-// Connexion à la base de données
+// Connecter à la base de données
 db.connect((err) => {
-    if (err) {
-        console.error('Erreur de connexion à la base de données :', err);
-        return;
-    }
+    if (err) throw err;
     console.log('Connecté à la base de données MySQL');
 });
 
-const token = '7282753875:AAEcih5wYDaniimZD_5lWt3qhn7ElhQvGl4';
-const bot = new TelegramBot(token, { polling: true });
-
-const channelIds = ['-1002017559099', '-1001923341484']; // Remplacez par les vrais IDs de vos canaux
+const channelIds = [-1001923341484, -1002017559099];
 const freeSequenceLimit = 5; // Limite de signaux pour les utilisateurs gratuits
-const proUserIds = [814566054, 987654321]; // Remplacez par les IDs des utilisateurs pro
+const proUserIds = [5873712733, 6461768442]; // Remplacez ces IDs par les IDs des utilisateurs pro
 let userSequences = {};
 
 // Fonction pour générer une séquence de jeu Apple
@@ -48,22 +45,19 @@ async function checkUserMembership(userId) {
                 return false;
             }
         } catch (error) {
-            console.error('Erreur lors de la vérification des canaux :', error);
+            console.error('Erreur lors de la vérification des canaux:', error);
             return false;
         }
     }
     return true;
 }
 
-// Fonction pour enregistrer l'ID utilisateur dans la base de données
-function saveUserId(userId) {
-    const query = `INSERT INTO users (telegram_id, registration_date) VALUES (?, NOW())`;
-    db.query(query, [userId], (err, result) => {
-        if (err) {
-            console.error('Erreur lors de l\'enregistrement de l\'ID utilisateur :', err);
-        } else {
-            console.log(`Utilisateur avec ID ${userId} enregistré dans la base de données.`);
-        }
+// Fonction pour stocker l'ID utilisateur dans la base de données
+function storeUserId(userId) {
+    const query = 'INSERT INTO users (user_id) VALUES (?)';
+    db.query(query, [userId], (err, results) => {
+        if (err) throw err;
+        console.log(`ID utilisateur ${userId} stocké dans la base de données`);
     });
 }
 
@@ -72,17 +66,19 @@ bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     const name = msg.chat.first_name || "Utilisateur";
     
-    // Stocker l'ID utilisateur
+    // Stocker l'ID utilisateur dans la base de données
+    storeUserId(chatId);
+
+    // Stocker l'ID utilisateur (ceci est un exemple, à améliorer pour un stockage permanent)
     userSequences[chatId] = { count: 0, lastSequenceTime: 0 };
-    saveUserId(chatId); // Enregistrer l'ID utilisateur
 
     const welcomeMessage = `Salut ${name}, bienvenue dans le hack Apple of Fortune! Veuillez rejoindre les canaux puis cliquez sur check.`;
     
     const options = {
         reply_markup: {
             inline_keyboard: [
-                [{ text: 'Canal 1', url: 'https://t.me/channel1' }],
-                [{ text: 'Canal 2', url: 'https://t.me/channel2' }],
+                [{ text: 'Canal 1', url: 'https://t.me/+DZ119_DCChAwOWI0' }],
+                [{ text: 'Canal 2', url: 'https://t.me/+5XrGoQkNTgkxY2U0' }],
                 [{ text: 'Check ✅️', callback_data: 'check_channels' }]
             ]
         }
@@ -153,7 +149,7 @@ bot.on('callback_query', async (query) => {
     }
 });
 
-// Vérification de l'ID utilisateur
+// Vérification de l'ID 1xbet
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text;
