@@ -4,10 +4,10 @@ const channelIds = [-1001923341484, -1002017559099];
 
 // Créer une connexion à la base de données MySQL
 const db = mysql.createConnection({
-    host: 'localhost', // Remplacez par l'hôte de votre base de données
-    user: 'root', // Remplacez par votre nom d'utilisateur MySQL
-    password: 'password', // Remplacez par votre mot de passe MySQL
-    database: 'telegram_bot' // Remplacez par le nom de votre base de données
+    host: '109.70.148.57', // Remplacez par l'hôte de votre base de données
+    user: 'solkahor_skh', // Remplacez par votre nom d'utilisateur MySQL
+    password: 'TesteTest2024', // Remplacez par votre mot de passe MySQL
+    database: 'solkahor_skh'// Remplacez par le nom de votre base de données
 });
 
 // Se connecter à la base de données
