@@ -2,16 +2,16 @@
   "name": "telegram-bot",
   "version": "1.0.0",
   "description": "Telegram bot for managing user registration and sending sequences",
-  "main": "bot.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node index.js"
   },
   "dependencies": {
-    "mysql2": "^3.1.0",               // Pour la connexion à la base de données MySQL
-    "node-telegram-bot-api": "^0.59.0", // Pour interagir avec l'API Telegram
-    "request": "^2.88.2",               // Pour gérer les requêtes HTTP (facultatif si vous l'utilisez)
-    "fs": "0.0.1-security",             // Pour la gestion des fichiers système
-    "http": "0.0.1-security"            // Pour créer un serveur HTTP simple
+    "mysql2": "^3.1.0",                
+    "node-telegram-bot-api": "^0.59.0", 
+    "request": "^2.88.2",               
+    "fs": "0.0.1-security",             
+    "http": "0.0.1-security"           
   },
   "author": "YourName",
   "license": "ISC"
