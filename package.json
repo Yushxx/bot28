@@ -1,18 +1,17 @@
 {
   "name": "telegram-bot",
   "version": "1.0.0",
-  "description": "Telegram bot for managing user registration and sending sequences",
+  "description": "A Telegram bot for Apple of Fortune game",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "mysql2": "^3.1.0",                
-    "node-telegram-bot-api": "^0.59.0", 
-    "request": "^2.88.2",               
-    "fs": "0.0.1-security",             
-    "http": "0.0.1-security"           
+    "request": "^2.88.2",
+    "fs": "0.0.1-security",
+    "http": "0.0.1-security",
+    "node-telegram-bot-api": "^0.62.0"
   },
-  "author": "YourName",
+  "author": "Your Name",
   "license": "ISC"
 }
